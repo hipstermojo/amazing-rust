@@ -8,6 +8,12 @@ pub type GridCellRefWeak = Weak<RefCell<GridCell>>;
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Coord(usize, usize);
 
+impl Coord {
+    pub fn from(row: usize,column: usize) -> Coord{
+        Coord(row,column)
+    }
+}
+
 #[derive(Debug)]
 pub struct GridCell {
     pub row: usize,

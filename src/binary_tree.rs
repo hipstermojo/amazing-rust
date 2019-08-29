@@ -4,7 +4,7 @@ use std::rc::Rc;
 use crate::cell::GridCell;
 use crate::grid::Grid;
 
-struct BinaryTree {}
+pub struct BinaryTree {}
 
 impl BinaryTree {
     pub fn on(mut grid: Grid) -> Grid {
