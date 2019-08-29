@@ -5,7 +5,7 @@ use rand;
 
 type GridCells = Vec<Vec<cell::GridCellRef>>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Grid {
     pub rows: usize,
     pub columns: usize,

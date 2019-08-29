@@ -1,3 +1,4 @@
+mod binary_tree;
 mod cell;
 mod grid;
 
