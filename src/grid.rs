@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::cell;
+use crate::{cell, cell::Coord};
 use rand;
 
 type GridCells = Vec<Vec<cell::GridCellRef>>;
@@ -84,6 +84,56 @@ impl Grid {
 
     pub fn size(&self) -> usize {
         self.rows * self.columns
+    }
+}
+
+impl ToString for Grid {
+    fn to_string(&self) -> String {
+        let mut output = String::new();
+        let section = "+".to_owned() + &"---+".repeat(self.columns) + "\n";
+        output.push_str(&section);
+        self.grid
+            .iter()
+            .map(|row| {
+                let top = "|".to_owned();
+                let bottom = "+".to_owned();
+                let (top, bottom) = row.iter().fold((top, bottom), |acc, cell| {
+                    let body = "   ";
+                    let east_boundary = if let Some(eastern_neighbour) = &cell.borrow().east {
+                        let eastern_cell = eastern_neighbour.upgrade().unwrap();
+                        let east_coords =
+                            Coord::from(eastern_cell.borrow().row, eastern_cell.borrow().column);
+                        if cell.borrow().is_linked(&east_coords) {
+                            " "
+                        } else {
+                            "|"
+                        }
+                    } else {
+                        "|"
+                    };
+                    let south_boundary = if let Some(southern_neighbour) = &cell.borrow().south {
+                        let southern_cell = southern_neighbour.upgrade().unwrap();
+                        let south_coords =
+                            Coord::from(southern_cell.borrow().row, southern_cell.borrow().column);
+                        if cell.borrow().is_linked(&south_coords) {
+                            "   "
+                        } else {
+                            "---"
+                        }
+                    } else {
+                        "---"
+                    };
+                    (acc.0 + body + east_boundary, acc.1 + south_boundary + "+")
+                });
+                (top, bottom)
+            })
+            .for_each(|(top, bottom)| {
+                output.push_str(&top);
+                output.push_str("\n");
+                output.push_str(&bottom);
+                output.push_str("\n");
+            });
+        output
     }
 }
 
