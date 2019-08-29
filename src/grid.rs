@@ -6,13 +6,13 @@ type GridCells = Vec<Vec<cell::GridCellRef>>;
 
 #[derive(Debug)]
 pub struct Grid {
-    pub rows: u32,
-    pub columns: u32,
+    pub rows: usize,
+    pub columns: usize,
     pub grid: GridCells,
 }
 
 impl Grid {
-    pub fn initialize(rows: u32, columns: u32) -> Grid {
+    pub fn initialize(rows: usize, columns: usize) -> Grid {
         let grid = Grid {
             rows: rows,
             columns: columns,
@@ -21,7 +21,7 @@ impl Grid {
         grid
     }
 
-    pub fn prepare_grid(rows: u32, columns: u32) -> GridCells {
+    pub fn prepare_grid(rows: usize, columns: usize) -> GridCells {
         (0..rows)
             .map(|r| {
                 (0..columns)
@@ -32,15 +32,15 @@ impl Grid {
     }
 
     pub fn configure_cells(&mut self) {
-        for row in 0..self.rows as usize {
-            for column in 0..self.columns as usize {
+        for row in 0..self.rows {
+            for column in 0..self.columns {
                 let mut cell = self.grid[row][column].borrow_mut();
                 let north = if row > 0 {
                     self.get_cell_ref(row - 1, column)
                 } else {
                     None
                 };
-                let east = if column + 1 < self.columns as usize {
+                let east = if column + 1 < self.columns {
                     self.get_cell_ref(row, column + 1)
                 } else {
                     None
@@ -50,7 +50,7 @@ impl Grid {
                 } else {
                     None
                 };
-                let south = if row + 1 < self.columns as usize {
+                let south = if row + 1 < self.columns {
                     self.get_cell_ref(row + 1, column)
                 } else {
                     None

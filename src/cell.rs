@@ -6,12 +6,12 @@ pub type GridCellRef = Rc<RefCell<GridCell>>;
 pub type GridCellRefWeak = Weak<RefCell<GridCell>>;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub struct Coord(u32, u32);
+pub struct Coord(usize, usize);
 
 #[derive(Debug)]
 pub struct GridCell {
-    pub row: u32,
-    pub column: u32,
+    pub row: usize,
+    pub column: usize,
     pub north: Option<GridCellRefWeak>,
     pub south: Option<GridCellRefWeak>,
     pub east: Option<GridCellRefWeak>,
@@ -20,7 +20,7 @@ pub struct GridCell {
 }
 
 impl GridCell {
-    pub fn init(row: u32, column: u32) -> GridCellRef {
+    pub fn init(row: usize, column: usize) -> GridCellRef {
         Rc::new(RefCell::new(GridCell {
             row: row,
             column: column,
