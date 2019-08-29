@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use crate::cell;
+use rand;
 
 type GridCells = Vec<Vec<cell::GridCellRef>>;
 
@@ -73,6 +74,16 @@ impl Grid {
         } else {
             None
         }
+    }
+
+    pub fn get_random_cell(&self) -> cell::GridCellRefWeak {
+        let rand_row = rand::random::<usize>() % self.rows;
+        let rand_col = rand::random::<usize>() % self.columns;
+        self.get_cell_ref(rand_row, rand_col).unwrap()
+    }
+
+    pub fn size(&self) -> usize {
+        self.rows * self.columns
     }
 }
 
