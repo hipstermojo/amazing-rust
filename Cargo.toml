@@ -8,3 +8,7 @@ edition = "2018"
 
 [dependencies]
 rand = "0.7.0"
+
+[dependencies.cairo-rs]
+version = "0.7.1"
+features= ["png"]

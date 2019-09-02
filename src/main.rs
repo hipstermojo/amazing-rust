@@ -1,13 +1,15 @@
 mod binary_tree;
 mod cell;
 mod grid;
+mod render;
 mod side_winder;
 
 use grid::Grid;
+use render::Renderable;
 
 fn main() {
     println!("I am making some amazing things");
-    let mut grid = Grid::initialize(4, 4);
+    let mut grid = Grid::initialize(6, 6);
     grid.configure_cells();
     {
         let binary_tree_grid = binary_tree::BinaryTree::on(grid.clone());
@@ -24,4 +26,6 @@ fn main() {
             side_winder_grid.to_string()
         );
     }
+
+    grid.to_png();
 }
