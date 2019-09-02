@@ -1,5 +1,4 @@
 use rand;
-use std::rc::Rc;
 
 use crate::cell::GridCell;
 use crate::grid::Grid;
@@ -14,7 +13,7 @@ impl BinaryTree {
                     .map(|col| {
                         let mut neighbours = Vec::new();
 
-                        let mut cell = &grid.grid[row][col];
+                        let cell = &grid.grid[row][col];
                         if let Some(cell_ref) = &cell.borrow().north {
                             neighbours.push(cell_ref.clone());
                         }

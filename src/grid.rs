@@ -1,7 +1,8 @@
 use std::rc::Rc;
+use rand;
 
 use crate::{cell, cell::Coord};
-use rand;
+
 
 type GridCells = Vec<Vec<cell::GridCellRef>>;
 
@@ -76,9 +77,9 @@ impl Grid {
         }
     }
 
-    pub fn reset(&mut self){
-        for row in (0..self.rows){
-            for col in (0..self.columns){
+    pub fn reset(&mut self) {
+        for row in 0..self.rows {
+            for col in 0..self.columns {
                 let cell = &self.grid[row][col];
                 cell.borrow_mut().reset();
             }
@@ -145,6 +146,8 @@ impl ToString for Grid {
         output
     }
 }
+
+
 
 #[cfg(test)]
 mod tests {
