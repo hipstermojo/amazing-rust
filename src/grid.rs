@@ -76,6 +76,15 @@ impl Grid {
         }
     }
 
+    pub fn reset(&mut self){
+        for row in (0..self.rows){
+            for col in (0..self.columns){
+                let cell = &self.grid[row][col];
+                cell.borrow_mut().reset();
+            }
+        }
+    }
+
     pub fn get_random_cell(&self) -> cell::GridCellRefWeak {
         let rand_row = rand::random::<usize>() % self.rows;
         let rand_col = rand::random::<usize>() % self.columns;

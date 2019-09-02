@@ -54,6 +54,10 @@ impl GridCell {
         right.links.remove(&left_coord);
     }
 
+    pub fn reset(&mut self){
+        self.links.clear();
+    }
+
     pub fn get_links(&self) -> Vec<Coord> {
         self.links.iter().map(|x| x.clone()).collect()
     }
