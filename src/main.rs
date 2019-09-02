@@ -1,6 +1,7 @@
 mod binary_tree;
 mod cell;
 mod grid;
+mod side_winder;
 
 use grid::Grid;
 
