@@ -30,14 +30,11 @@ impl SideWinder {
                                     &mut northern_ref.borrow_mut(),
                                 );
                                 run.clear();
-                            } else {
-                                let eastern_ref =
-                                    member.borrow().east.as_ref().unwrap().upgrade().unwrap();
-                                GridCell::link(
-                                    &mut member.borrow_mut(),
-                                    &mut eastern_ref.borrow_mut(),
-                                );
                             }
+                        } else {
+                            let eastern_ref =
+                                cell.borrow().east.as_ref().unwrap().upgrade().unwrap();
+                            GridCell::link(&mut cell.borrow_mut(), &mut eastern_ref.borrow_mut());
                         }
                         cell.clone()
                     })
