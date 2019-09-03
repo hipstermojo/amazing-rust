@@ -27,8 +27,6 @@ impl Renderable for Grid {
         context.stroke();
 
         for row in 0..self.rows {
-            let image_width = image_width as f64;
-
             // Draw western border
             context.line_to(PADDING as f64, PADDING + (30 * row) as f64);
             context.line_to(PADDING as f64, PADDING + (30 * (row + 1)) as f64);
@@ -57,18 +55,7 @@ impl Renderable for Grid {
                     draw_horizontal(&context, row + 1, col, PADDING);
                 }
             }
-
-            // Draw eastern border
-            context.line_to(image_width - PADDING, PADDING + (30 * row) as f64);
-            context.line_to(image_width - PADDING, PADDING + (30 * (row + 1)) as f64);
-            context.stroke();
         }
-
-        // Draw southern border
-        context.line_to(PADDING, image_height as f64 - PADDING);
-        context.line_to(image_width as f64 - PADDING, image_height as f64 - PADDING);
-        context.stroke();
-
         let mut file = File::create("output.png").expect("Couldn't create an output file");
         surface
             .write_to_png(&mut file)
