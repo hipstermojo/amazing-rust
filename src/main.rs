@@ -1,5 +1,6 @@
 mod binary_tree;
 mod cell;
+mod distances;
 mod grid;
 mod render;
 mod side_winder;
