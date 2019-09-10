@@ -108,24 +108,12 @@ impl Grid {
                     strong_cell_ref.borrow().row,
                     strong_cell_ref.borrow().column,
                 ));
-                strong_cell_ref
-                    .borrow()
-                    .links
-                    .iter()
-                    .filter(|coord| !distances.has_cell(coord))
-                    .cloned()
-                    .for_each(|unvisited| {
-                        new_frontier.push(
-                            self.get_cell_ref(unvisited.row(), unvisited.column())
-                                .unwrap(),
-                        )
-                    });
-                for weak_ref in &new_frontier {
-                    let strong_ref = weak_ref.upgrade().unwrap();
-                    distances.set_cell_distance(
-                        Coord::from(strong_ref.borrow().row, strong_ref.borrow().column),
-                        current_distance + 1,
-                    );
+
+                for link in &strong_cell_ref.borrow().links {
+                    if !distances.has_cell(link) {
+                        new_frontier.push(self.get_cell_ref(link.row(), link.column()).unwrap());
+                        distances.set_cell_distance(link.clone(), current_distance + 1);
+                    }
                 }
             }
             frontier = new_frontier;
