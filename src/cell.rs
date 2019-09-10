@@ -9,8 +9,17 @@ pub type GridCellRefWeak = Weak<RefCell<GridCell>>;
 pub struct Coord(usize, usize);
 
 impl Coord {
-    pub fn from(row: usize,column: usize) -> Coord{
-        Coord(row,column)
+    pub fn row(&self) -> usize {
+        self.0
+    }
+    pub fn column(&self) -> usize {
+        self.1
+    }
+}
+
+impl Coord {
+    pub fn from(row: usize, column: usize) -> Coord {
+        Coord(row, column)
     }
 }
 
@@ -54,7 +63,7 @@ impl GridCell {
         right.links.remove(&left_coord);
     }
 
-    pub fn reset(&mut self){
+    pub fn reset(&mut self) {
         self.links.clear();
     }
 

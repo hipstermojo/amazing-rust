@@ -1,8 +1,9 @@
 use std::rc::Rc;
+
 use rand;
 
+use crate::distances::Distances;
 use crate::{cell, cell::Coord};
-
 
 type GridCells = Vec<Vec<cell::GridCellRef>>;
 
@@ -95,6 +96,52 @@ impl Grid {
     pub fn size(&self) -> usize {
         self.rows * self.columns
     }
+
+    pub fn distances(&self) -> Distances {
+        let mut distances = Distances::initialize(Coord::from(0, 0));
+        let mut frontier = vec![self.get_cell_ref(0, 0).unwrap()];
+        while !frontier.is_empty() {
+            let mut new_frontier = Vec::new();
+            for weak_cell_ref in &mut frontier {
+                let strong_cell_ref = weak_cell_ref.upgrade().unwrap();
+                let current_distance = distances.get_cell_distance(&Coord::from(
+                    strong_cell_ref.borrow().row,
+                    strong_cell_ref.borrow().column,
+                ));
+                strong_cell_ref
+                    .borrow()
+                    .links
+                    .iter()
+                    .filter(|coord| !distances.has_cell(coord))
+                    .cloned()
+                    .for_each(|unvisited| {
+                        new_frontier.push(
+                            self.get_cell_ref(unvisited.row(), unvisited.column())
+                                .unwrap(),
+                        )
+                    });
+                for weak_ref in &new_frontier {
+                    let strong_ref = weak_ref.upgrade().unwrap();
+                    distances.set_cell_distance(
+                        Coord::from(strong_ref.borrow().row, strong_ref.borrow().column),
+                        current_distance + 1,
+                    );
+                }
+            }
+            frontier = new_frontier;
+        }
+        distances
+    }
+
+    pub fn contents_of(&self, cell: &cell::GridCell) -> String {
+        let distances = self.distances();
+        let cell_distance = distances
+            .cells
+            .get(&Coord::from(cell.row, cell.column))
+            .map(|x| std::char::from_digit(*x as u32, 32).unwrap())
+            .unwrap_or(' ');
+        format!(" {} ", cell_distance.to_string())
+    }
 }
 
 impl ToString for Grid {
@@ -108,7 +155,7 @@ impl ToString for Grid {
                 let top = "|".to_owned();
                 let bottom = "+".to_owned();
                 let (top, bottom) = row.iter().fold((top, bottom), |acc, cell| {
-                    let body = "   ";
+                    let body = self.contents_of(&cell.borrow());
                     let east_boundary = if let Some(eastern_neighbour) = &cell.borrow().east {
                         let eastern_cell = eastern_neighbour.upgrade().unwrap();
                         let east_coords =
@@ -133,7 +180,7 @@ impl ToString for Grid {
                     } else {
                         "---"
                     };
-                    (acc.0 + body + east_boundary, acc.1 + south_boundary + "+")
+                    (acc.0 + &body + east_boundary, acc.1 + south_boundary + "+")
                 });
                 (top, bottom)
             })
@@ -146,8 +193,6 @@ impl ToString for Grid {
         output
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {
