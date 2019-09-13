@@ -8,7 +8,7 @@ pub struct Distances {
 }
 
 impl Distances {
-    pub fn initialize(root: Coord) -> Distances {
+    pub fn initialize(root: Coord) -> Self {
         let mut distances = Distances {
             root: root.clone(),
             cells: HashMap::new(),
@@ -31,5 +31,15 @@ impl Distances {
 
     pub fn get_cells(&self) -> Vec<Coord> {
         self.cells.keys().cloned().collect()
+    }
+
+    pub fn max(&self) -> (Coord, usize) {
+        let mut result = (self.root.clone(), 0);
+        for (coord, distance) in self.cells.iter() {
+            if distance > &result.1 {
+                result = (coord.clone(), *distance);
+            }
+        }
+        result
     }
 }
