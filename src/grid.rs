@@ -146,14 +146,27 @@ impl Grid {
     }
 
     pub fn contents_of(&self, cell: &cell::GridCell) -> String {
-        let distances = self.distances();
-        // let distances = self.path_to(Coord::from(self.rows - 1, 0));
+        // let distances = self.distances(Coord::from(0, 0));
+        // let distances = self.path_to(
+        //     self.distances(Coord::from(0, 0)),
+        //     Coord::from(self.rows - 1, 0),
+        // );
+        let distances = self.longest_path();
         let cell_distance = distances
             .cells
             .get(&Coord::from(cell.row, cell.column))
             .map(|x| std::char::from_digit(*x as u32, 32).unwrap())
             .unwrap_or(' ');
         format!(" {} ", cell_distance.to_string())
+    }
+
+    pub fn longest_path(&self) -> Distances {
+        let mut distances = self.distances(Coord::from(0, 0));
+        let (new_start, _) = distances.max();
+        // distances.root = new_start.clone();
+        distances = self.distances(new_start);
+        let (goal, _) = distances.max();
+        self.path_to(distances, goal)
     }
 }
 
