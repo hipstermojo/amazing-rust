@@ -121,8 +121,34 @@ impl Grid {
         distances
     }
 
+    pub fn path_to(&self, goal: Coord) -> Distances {
+        let mut current = goal;
+        let maze = self.distances();
+        let mut breadcrumbs = Distances::initialize(maze.root.clone());
+        let distance = maze.get_cell_distance(&current);
+        breadcrumbs.set_cell_distance(current.clone(), distance);
+        'traversing: loop {
+            if current == maze.root {
+                break 'traversing;
+            } else {
+                let current_weak_cell = self.get_cell_ref(current.row(), current.column()).unwrap();
+                let current_strong_cell = current_weak_cell.upgrade().unwrap();
+                for link in &current_strong_cell.borrow().links {
+                    if maze.get_cell_distance(link) < maze.get_cell_distance(&current) {
+                        let distance = maze.get_cell_distance(link);
+                        breadcrumbs.set_cell_distance(link.clone(), distance);
+                        current = link.clone();
+                        break;
+                    }
+                }
+            }
+        }
+        breadcrumbs
+    }
+
     pub fn contents_of(&self, cell: &cell::GridCell) -> String {
         let distances = self.distances();
+        // let distances = self.path_to(Coord::from(self.rows - 1, 0));
         let cell_distance = distances
             .cells
             .get(&Coord::from(cell.row, cell.column))
