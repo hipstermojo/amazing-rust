@@ -97,9 +97,9 @@ impl Grid {
         self.rows * self.columns
     }
 
-    pub fn distances(&self) -> Distances {
-        let mut distances = Distances::initialize(Coord::from(0, 0));
-        let mut frontier = vec![self.get_cell_ref(0, 0).unwrap()];
+    pub fn distances(&self, start: Coord) -> Distances {
+        let mut frontier = vec![self.get_cell_ref(start.row(), start.column()).unwrap()];
+        let mut distances = Distances::initialize(start);
         while !frontier.is_empty() {
             let mut new_frontier = Vec::new();
             for weak_cell_ref in &mut frontier {
@@ -121,9 +121,8 @@ impl Grid {
         distances
     }
 
-    pub fn path_to(&self, goal: Coord) -> Distances {
+    pub fn path_to(&self, maze: Distances, goal: Coord) -> Distances {
         let mut current = goal;
-        let maze = self.distances();
         let mut breadcrumbs = Distances::initialize(maze.root.clone());
         let distance = maze.get_cell_distance(&current);
         breadcrumbs.set_cell_distance(current.clone(), distance);
