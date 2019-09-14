@@ -12,16 +12,17 @@ pub struct Grid {
     pub rows: usize,
     pub columns: usize,
     pub grid: GridCells,
+    pub distances: Distances,
 }
 
 impl Grid {
     pub fn initialize(rows: usize, columns: usize) -> Grid {
-        let grid = Grid {
+        Grid {
             rows: rows,
             columns: columns,
             grid: Grid::prepare_grid(rows, columns),
-        };
-        grid
+            distances: Distances::initialize(Coord::from(0, 0)),
+        }
     }
 
     pub fn prepare_grid(rows: usize, columns: usize) -> GridCells {
@@ -85,6 +86,7 @@ impl Grid {
                 cell.borrow_mut().reset();
             }
         }
+        self.distances = Distances::initialize(Coord::from(0, 0));
     }
 
     pub fn get_random_cell(&self) -> cell::GridCellRefWeak {
@@ -97,44 +99,45 @@ impl Grid {
         self.rows * self.columns
     }
 
-    pub fn distances(&self, start: Coord) -> Distances {
+    pub fn find_distances(&mut self, start: Coord) {
         let mut frontier = vec![self.get_cell_ref(start.row(), start.column()).unwrap()];
-        let mut distances = Distances::initialize(start);
         while !frontier.is_empty() {
             let mut new_frontier = Vec::new();
             for weak_cell_ref in &mut frontier {
                 let strong_cell_ref = weak_cell_ref.upgrade().unwrap();
-                let current_distance = distances.get_cell_distance(&Coord::from(
+                let current_distance = self.distances.get_cell_distance(&Coord::from(
                     strong_cell_ref.borrow().row,
                     strong_cell_ref.borrow().column,
                 ));
 
                 for link in &strong_cell_ref.borrow().links {
-                    if !distances.has_cell(link) {
+                    if !self.distances.has_cell(link) {
                         new_frontier.push(self.get_cell_ref(link.row(), link.column()).unwrap());
-                        distances.set_cell_distance(link.clone(), current_distance + 1);
+                        self.distances
+                            .set_cell_distance(link.clone(), current_distance + 1);
                     }
                 }
             }
             frontier = new_frontier;
         }
-        distances
     }
 
-    pub fn path_to(&self, maze: Distances, goal: Coord) -> Distances {
+    pub fn path_to(&self, goal: Coord) -> Distances {
         let mut current = goal;
-        let mut breadcrumbs = Distances::initialize(maze.root.clone());
-        let distance = maze.get_cell_distance(&current);
+        let mut breadcrumbs = Distances::initialize(self.distances.root.clone());
+        let distance = self.distances.get_cell_distance(&current);
         breadcrumbs.set_cell_distance(current.clone(), distance);
         'traversing: loop {
-            if current == maze.root {
+            if current == self.distances.root {
                 break 'traversing;
             } else {
                 let current_weak_cell = self.get_cell_ref(current.row(), current.column()).unwrap();
                 let current_strong_cell = current_weak_cell.upgrade().unwrap();
                 for link in &current_strong_cell.borrow().links {
-                    if maze.get_cell_distance(link) < maze.get_cell_distance(&current) {
-                        let distance = maze.get_cell_distance(link);
+                    if self.distances.get_cell_distance(link)
+                        < self.distances.get_cell_distance(&current)
+                    {
+                        let distance = self.distances.get_cell_distance(link);
                         breadcrumbs.set_cell_distance(link.clone(), distance);
                         current = link.clone();
                         break;
@@ -146,13 +149,8 @@ impl Grid {
     }
 
     pub fn contents_of(&self, cell: &cell::GridCell) -> String {
-        // let distances = self.distances(Coord::from(0, 0));
-        // let distances = self.path_to(
-        //     self.distances(Coord::from(0, 0)),
-        //     Coord::from(self.rows - 1, 0),
-        // );
-        let distances = self.longest_path();
-        let cell_distance = distances
+        let cell_distance = self
+            .distances
             .cells
             .get(&Coord::from(cell.row, cell.column))
             .map(|x| std::char::from_digit(*x as u32, 32).unwrap())
@@ -160,13 +158,13 @@ impl Grid {
         format!(" {} ", cell_distance.to_string())
     }
 
-    pub fn longest_path(&self) -> Distances {
-        let mut distances = self.distances(Coord::from(0, 0));
-        let (new_start, _) = distances.max();
-        // distances.root = new_start.clone();
-        distances = self.distances(new_start);
-        let (goal, _) = distances.max();
-        self.path_to(distances, goal)
+    pub fn longest_path(&mut self) -> Distances {
+        self.find_distances(Coord::from(0, 0));
+        let (new_start, _) = self.distances.max();
+        self.find_distances(new_start);
+        let (goal, _) = self.distances.max();
+        println!("Goal is {:?}", goal);
+        self.path_to(goal)
     }
 }
 

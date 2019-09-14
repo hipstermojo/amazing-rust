@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use crate::cell::Coord;
 
+#[derive(Debug, Clone)]
 pub struct Distances {
     pub root: Coord,
     pub cells: HashMap<Coord, usize>,
