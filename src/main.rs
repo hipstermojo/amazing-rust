@@ -33,6 +33,7 @@ fn main() {
             "Here's the most difficult path in the maze\n{}",
             binary_tree_grid.to_string()
         );
+        binary_tree_grid.to_png("binary_tree.png");
     }
     grid.reset();
     {
@@ -55,7 +56,6 @@ fn main() {
             "Here's the most difficult path in the maze\n{}",
             side_winder_grid.to_string()
         );
+        side_winder_grid.to_png("sidewinder.png");
     }
-
-    grid.to_png();
 }

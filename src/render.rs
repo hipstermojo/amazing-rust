@@ -1,7 +1,7 @@
 use cairo::{Context, Format, ImageSurface};
 use std::fs::File;
 
-use crate::cell::Coord;
+use crate::cell::{Coord, GridCellRef};
 use crate::grid::Grid;
 
 enum Direction {
@@ -9,12 +9,27 @@ enum Direction {
     Vertical,
 }
 
+pub struct Dimension {
+    width: f64,
+    height: f64,
+}
+
 pub trait Renderable {
-    fn to_png(&self) {}
+    fn to_png(&self, filename: &str) {}
+    fn draw_square_cell(
+        &self,
+        context: &Context,
+        cell: &GridCellRef,
+        x_index: usize,
+        y_index: usize,
+        padding: f64,
+        cell_size: Dimension,
+    ) {
+    }
 }
 
 impl Renderable for Grid {
-    fn to_png(&self) {
+    fn to_png(&self,filename: &str) {
         const PADDING: f64 = 10.0;
         let image_width = (self.columns * 30) as i32 + (2 * PADDING as i32);
         let image_height = (self.rows * 30) as i32 + (2 * PADDING as i32);
@@ -39,11 +54,17 @@ impl Renderable for Grid {
 
             for col in 0..self.columns {
                 let cell = &self.grid[row][col];
+                let mut box_dimension = Dimension {
+                    width: 28.0,
+                    height: 28.0,
+                };
                 if let Some(eastern_neighbour) = &cell.borrow().east {
                     let eastern_ref = eastern_neighbour.upgrade().unwrap();
                     let eastern_coords =
                         Coord::from(eastern_ref.borrow().row, eastern_ref.borrow().column);
-                    if !cell.borrow().is_linked(&eastern_coords) {
+                    if cell.borrow().is_linked(&eastern_coords) {
+                        box_dimension.width = 30.0;
+                    } else {
                         draw_line(Direction::Vertical, &context, row, col + 1, PADDING);
                     }
                 } else {
@@ -53,40 +74,53 @@ impl Renderable for Grid {
                     let southern_ref = southern_neighbour.upgrade().unwrap();
                     let southern_coords =
                         Coord::from(southern_ref.borrow().row, southern_ref.borrow().column);
-                    if !cell.borrow().is_linked(&southern_coords) {
+                    if cell.borrow().is_linked(&southern_coords) {
+                        box_dimension.height = 30.0;
+                    } else {
                         draw_line(Direction::Horizontal, &context, row + 1, col, PADDING);
                     }
                 } else {
                     draw_line(Direction::Horizontal, &context, row + 1, col, PADDING);
                 }
-                let mut red_intensity;
-                let (_, max_distance) = self.distances.max();
-                if self
-                    .distances
-                    .has_cell(&Coord::from(cell.borrow().row, cell.borrow().column))
-                {
-                    let distance = self
-                        .distances
-                        .get_cell_distance(&Coord::from(cell.borrow().row, cell.borrow().column));
-                    red_intensity = 0.9;
-                } else {
-                    red_intensity = 0.0;
-                }
-                context.rectangle(
-                    PADDING + 1.0 + (30 * row) as f64,
-                    PADDING + 1.0 + (30 * col) as f64,
-                    28.0,
-                    28.0,
-                );
-                context.set_source_rgb(red_intensity, 0.0, 0.0);
-                context.fill();
-                context.set_source_rgb(0.0, 0.0, 0.0);
+                self.draw_square_cell(&context, cell, col, row, PADDING, box_dimension);
             }
         }
-        let mut file = File::create("output.png").expect("Couldn't create an output file");
+        let mut file = File::create(filename).expect("Couldn't create an output file");
         surface
             .write_to_png(&mut file)
             .expect("Couldn't write to output file");
+    }
+    fn draw_square_cell(
+        &self,
+        context: &Context,
+        cell: &GridCellRef,
+        x_index: usize,
+        y_index: usize,
+        padding: f64,
+        cell_size: Dimension,
+    ) {
+        let (_, max_distance) = self.distances.max();
+        let red_intensity;
+        if self
+            .distances
+            .has_cell(&Coord::from(cell.borrow().row, cell.borrow().column))
+        {
+            let distance = self
+                .distances
+                .get_cell_distance(&Coord::from(cell.borrow().row, cell.borrow().column));
+            red_intensity = 0.9;
+        } else {
+            red_intensity = 0.4;
+        }
+        context.rectangle(
+            padding + 1.0 + (30 * x_index) as f64,
+            padding + 1.0 + (30 * y_index) as f64,
+            cell_size.width,
+            cell_size.height,
+        );
+        context.set_source_rgb(red_intensity, 0.0, 0.0);
+        context.fill();
+        context.set_source_rgb(0.0, 0.0, 0.0);
     }
 }
 
