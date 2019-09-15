@@ -163,7 +163,6 @@ impl Grid {
         let (new_start, _) = self.distances.max();
         self.find_distances(new_start);
         let (goal, _) = self.distances.max();
-        println!("Goal is {:?}", goal);
         self.path_to(goal)
     }
 }
