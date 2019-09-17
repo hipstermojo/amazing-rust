@@ -29,14 +29,14 @@ pub trait Renderable {
 }
 
 impl Renderable for Grid {
-    fn to_png(&self,filename: &str) {
+    fn to_png(&self, filename: &str) {
         const PADDING: f64 = 10.0;
         let image_width = (self.columns * 30) as i32 + (2 * PADDING as i32);
         let image_height = (self.rows * 30) as i32 + (2 * PADDING as i32);
         let surface = ImageSurface::create(Format::ARgb32, image_width, image_height)
             .expect("Could not generate ImageSurface");
         let context = Context::new(&surface);
-        context.set_source_rgb(1.0, 0.0, 0.0);
+        context.set_source_rgb(1.0, 1.0, 1.0);
         context.paint();
 
         context.set_source_rgb(0.0, 0.0, 0.0);
@@ -100,7 +100,7 @@ impl Renderable for Grid {
         cell_size: Dimension,
     ) {
         let (_, max_distance) = self.distances.max();
-        let red_intensity;
+        let intensity;
         if self
             .distances
             .has_cell(&Coord::from(cell.borrow().row, cell.borrow().column))
@@ -108,9 +108,9 @@ impl Renderable for Grid {
             let distance = self
                 .distances
                 .get_cell_distance(&Coord::from(cell.borrow().row, cell.borrow().column));
-            red_intensity = 0.9;
+            intensity = (max_distance - distance) as f64 / max_distance as f64;
         } else {
-            red_intensity = 0.4;
+            intensity = 0.0;
         }
         context.rectangle(
             padding + 1.0 + (30 * x_index) as f64,
@@ -118,7 +118,8 @@ impl Renderable for Grid {
             cell_size.width,
             cell_size.height,
         );
-        context.set_source_rgb(red_intensity, 0.0, 0.0);
+        let bright = 0.5 + (0.4 * intensity);
+        context.set_source_rgb(intensity, bright, intensity);
         context.fill();
         context.set_source_rgb(0.0, 0.0, 0.0);
     }
