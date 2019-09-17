@@ -19,7 +19,7 @@ fn main() {
             "Here's the maze using the binary tree algorithm!\n{}",
             binary_tree_grid.to_string()
         );
-        binary_tree_grid.find_distances(Coord::from(0, 0));
+        binary_tree_grid.distances = binary_tree_grid.find_distances(Coord::from(0, 0));
         let original_distances = binary_tree_grid.distances.clone();
         binary_tree_grid.distances =
             binary_tree_grid.path_to(Coord::from(binary_tree_grid.rows - 1, 0));
@@ -42,7 +42,7 @@ fn main() {
             "Here's the maze using the Sidewinder algorithm!\n{}",
             side_winder_grid.to_string()
         );
-        side_winder_grid.find_distances(Coord::from(0, 0));
+        side_winder_grid.distances = side_winder_grid.find_distances(Coord::from(0, 0));
         let original_distances = side_winder_grid.distances.clone();
         side_winder_grid.distances =
             side_winder_grid.path_to(Coord::from(side_winder_grid.rows - 1, 0));

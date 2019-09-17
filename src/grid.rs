@@ -99,27 +99,28 @@ impl Grid {
         self.rows * self.columns
     }
 
-    pub fn find_distances(&mut self, start: Coord) {
+    pub fn find_distances(&self, start: Coord) -> Distances {
         let mut frontier = vec![self.get_cell_ref(start.row(), start.column()).unwrap()];
+        let mut new_distances = Distances::initialize(start);
         while !frontier.is_empty() {
             let mut new_frontier = Vec::new();
             for weak_cell_ref in &mut frontier {
                 let strong_cell_ref = weak_cell_ref.upgrade().unwrap();
-                let current_distance = self.distances.get_cell_distance(&Coord::from(
+                let current_distance = new_distances.get_cell_distance(&Coord::from(
                     strong_cell_ref.borrow().row,
                     strong_cell_ref.borrow().column,
                 ));
 
                 for link in &strong_cell_ref.borrow().links {
-                    if !self.distances.has_cell(link) {
+                    if !new_distances.has_cell(link) {
                         new_frontier.push(self.get_cell_ref(link.row(), link.column()).unwrap());
-                        self.distances
-                            .set_cell_distance(link.clone(), current_distance + 1);
+                        new_distances.set_cell_distance(link.clone(), current_distance + 1);
                     }
                 }
             }
             frontier = new_frontier;
         }
+        new_distances
     }
 
     pub fn path_to(&self, goal: Coord) -> Distances {
@@ -153,15 +154,15 @@ impl Grid {
             .distances
             .cells
             .get(&Coord::from(cell.row, cell.column))
-            .map(|x| std::char::from_digit(*x as u32, 32).unwrap())
+            .map(|x| std::char::from_digit(*x as u32, 36).unwrap_or('~'))
             .unwrap_or(' ');
         format!(" {} ", cell_distance.to_string())
     }
 
     pub fn longest_path(&mut self) -> Distances {
-        self.find_distances(Coord::from(0, 0));
+        self.distances = self.find_distances(Coord::from(0, 0));
         let (new_start, _) = self.distances.max();
-        self.find_distances(new_start);
+        self.distances = self.find_distances(new_start);
         let (goal, _) = self.distances.max();
         self.path_to(goal)
     }
