@@ -5,6 +5,7 @@ mod distances;
 mod grid;
 mod render;
 mod side_winder;
+mod wilsons;
 
 use cell::Coord;
 use grid::Grid;
@@ -81,5 +82,27 @@ fn main() {
             aldous_broder_grid.to_string()
         );
         aldous_broder_grid.to_png("aldous_broder.png");
+    }
+    grid.reset();
+    {
+        let mut wilsons_grid = wilsons::Wilsons::on(grid.clone());
+        println!(
+            "Here's the maze using the Wilson's algorithm!\n{}",
+            wilsons_grid.to_string()
+        );
+        wilsons_grid.distances = wilsons_grid.find_distances(Coord::from(0, 0));
+        let original_distances = wilsons_grid.distances.clone();
+        wilsons_grid.distances = wilsons_grid.path_to(Coord::from(wilsons_grid.rows - 1, 0));
+        println!(
+            "Here's the path from NW to SW\n{}",
+            wilsons_grid.to_string()
+        );
+        wilsons_grid.distances = original_distances;
+        wilsons_grid.distances = wilsons_grid.longest_path();
+        println!(
+            "Here's the most difficult path in the maze\n{}",
+            wilsons_grid.to_string()
+        );
+        wilsons_grid.to_png("wilsons.png");
     }
 }
