@@ -14,6 +14,7 @@ pub struct Dimension {
     height: f64,
 }
 
+#[allow(unused_variables)]
 pub trait Renderable {
     fn to_png(&self, filename: &str) {}
     fn draw_square_cell(
