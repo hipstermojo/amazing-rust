@@ -5,7 +5,7 @@ use rand;
 pub struct Wilsons {}
 
 impl Wilsons {
-    pub fn on(mut grid: Grid) -> Grid {
+    pub fn on(grid: &Grid) {
         let mut unvisited = Vec::new();
         for row in 0..grid.rows {
             for column in 0..grid.columns {
@@ -34,7 +34,7 @@ impl Wilsons {
                         coord
                     })
                     .unwrap();
-                match path.iter().position(|coord| coord == &rand_cell_coord) {
+                match path.iter().position(|coord| *coord == rand_cell_coord) {
                     Some(position) => {
                         path.split_off(position + 1);
                     }
@@ -60,6 +60,5 @@ impl Wilsons {
                 unvisited.remove(index);
             }
         }
-        grid
     }
 }

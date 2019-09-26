@@ -16,93 +16,93 @@ fn main() {
     let mut grid = Grid::initialize(25, 25);
     grid.configure_cells();
     {
-        let mut binary_tree_grid = binary_tree::BinaryTree::on(grid.clone());
+        binary_tree::BinaryTree::on(&grid);
         println!(
             "Here's the maze using the binary tree algorithm!\n{}",
-            binary_tree_grid.to_string()
+            grid.to_string()
         );
-        binary_tree_grid.distances = binary_tree_grid.find_distances(Coord::from(0, 0));
-        let original_distances = binary_tree_grid.distances.clone();
-        binary_tree_grid.distances =
-            binary_tree_grid.path_to(Coord::from(binary_tree_grid.rows - 1, 0));
+        grid.distances = grid.find_distances(Coord::from(0, 0));
+        let original_distances = grid.distances.clone();
+        grid.distances =
+            grid.path_to(Coord::from(grid.rows - 1, 0));
         println!(
             "Here's the path from NW to SW\n{}",
-            binary_tree_grid.to_string()
+            grid.to_string()
         );
-        binary_tree_grid.distances = original_distances;
-        binary_tree_grid.distances = binary_tree_grid.longest_path();
+        grid.distances = original_distances;
+        grid.distances = grid.longest_path();
         println!(
             "Here's the most difficult path in the maze\n{}",
-            binary_tree_grid.to_string()
+            grid.to_string()
         );
-        binary_tree_grid.to_png("binary_tree.png");
+        grid.to_png("binary_tree.png");
     }
     grid.reset();
     {
-        let mut side_winder_grid = side_winder::SideWinder::on(grid.clone());
+        side_winder::SideWinder::on(&grid);
         println!(
             "Here's the maze using the Sidewinder algorithm!\n{}",
-            side_winder_grid.to_string()
+            grid.to_string()
         );
-        side_winder_grid.distances = side_winder_grid.find_distances(Coord::from(0, 0));
-        let original_distances = side_winder_grid.distances.clone();
-        side_winder_grid.distances =
-            side_winder_grid.path_to(Coord::from(side_winder_grid.rows - 1, 0));
+        grid.distances = grid.find_distances(Coord::from(0, 0));
+        let original_distances = grid.distances.clone();
+        grid.distances =
+            grid.path_to(Coord::from(grid.rows - 1, 0));
         println!(
             "Here's the path from NW to SW\n{}",
-            side_winder_grid.to_string()
+            grid.to_string()
         );
-        side_winder_grid.distances = original_distances;
-        side_winder_grid.distances = side_winder_grid.longest_path();
+        grid.distances = original_distances;
+        grid.distances = grid.longest_path();
         println!(
             "Here's the most difficult path in the maze\n{}",
-            side_winder_grid.to_string()
+            grid.to_string()
         );
-        side_winder_grid.to_png("sidewinder.png");
+        grid.to_png("sidewinder.png");
     }
     grid.reset();
     {
-        let mut aldous_broder_grid = aldous_broder::AldousBroder::on(grid.clone());
+        aldous_broder::AldousBroder::on(&grid);
         println!(
             "Here's the maze using the Aldous-Broder algorithm!\n{}",
-            aldous_broder_grid.to_string()
+            grid.to_string()
         );
-        aldous_broder_grid.distances = aldous_broder_grid.find_distances(Coord::from(0, 0));
-        let original_distances = aldous_broder_grid.distances.clone();
-        aldous_broder_grid.distances =
-            aldous_broder_grid.path_to(Coord::from(aldous_broder_grid.rows - 1, 0));
+        grid.distances = grid.find_distances(Coord::from(0, 0));
+        let original_distances = grid.distances.clone();
+        grid.distances =
+            grid.path_to(Coord::from(grid.rows - 1, 0));
         println!(
             "Here's the path from NW to SW\n{}",
-            aldous_broder_grid.to_string()
+            grid.to_string()
         );
-        aldous_broder_grid.distances = original_distances;
-        aldous_broder_grid.distances = aldous_broder_grid.longest_path();
+        grid.distances = original_distances;
+        grid.distances = grid.longest_path();
         println!(
             "Here's the most difficult path in the maze\n{}",
-            aldous_broder_grid.to_string()
+            grid.to_string()
         );
-        aldous_broder_grid.to_png("aldous_broder.png");
+        grid.to_png("aldous_broder.png");
     }
     grid.reset();
     {
-        let mut wilsons_grid = wilsons::Wilsons::on(grid.clone());
+        wilsons::Wilsons::on(&grid);
         println!(
             "Here's the maze using the Wilson's algorithm!\n{}",
-            wilsons_grid.to_string()
+            grid.to_string()
         );
-        wilsons_grid.distances = wilsons_grid.find_distances(Coord::from(0, 0));
-        let original_distances = wilsons_grid.distances.clone();
-        wilsons_grid.distances = wilsons_grid.path_to(Coord::from(wilsons_grid.rows - 1, 0));
+        grid.distances = grid.find_distances(Coord::from(0, 0));
+        let original_distances = grid.distances.clone();
+        grid.distances = grid.path_to(Coord::from(grid.rows - 1, 0));
         println!(
             "Here's the path from NW to SW\n{}",
-            wilsons_grid.to_string()
+            grid.to_string()
         );
-        wilsons_grid.distances = original_distances;
-        wilsons_grid.distances = wilsons_grid.longest_path();
+        grid.distances = original_distances;
+        grid.distances = grid.longest_path();
         println!(
             "Here's the most difficult path in the maze\n{}",
-            wilsons_grid.to_string()
+            grid.to_string()
         );
-        wilsons_grid.to_png("wilsons.png");
+        grid.to_png("wilsons.png");
     }
 }
