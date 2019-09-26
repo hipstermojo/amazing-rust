@@ -54,7 +54,7 @@ impl Grid {
                 } else {
                     None
                 };
-                let south = if row + 1 < self.columns {
+                let south = if row + 1 < self.rows {
                     self.get_cell_ref(row + 1, column)
                 } else {
                     None
