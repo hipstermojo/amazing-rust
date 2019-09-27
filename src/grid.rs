@@ -302,4 +302,14 @@ mod tests {
         let cell_ref = grid.get_cell_ref(1, 3).unwrap().upgrade().unwrap();
         assert_eq!((1, 3), (cell_ref.borrow().row, cell_ref.borrow().column));
     }
+
+    #[test]
+    fn random_cell_exists() {
+        let mut grid = Grid::initialize(5, 5);
+        grid.configure_cells();
+        let rand_cell = grid.get_random_cell().upgrade().unwrap();
+        let rand_cell_clone = &grid.grid[rand_cell.borrow().row][rand_cell.borrow().column];
+        assert_eq!(rand_cell_clone.borrow().row, rand_cell.borrow().row);
+        assert_eq!(rand_cell_clone.borrow().column, rand_cell.borrow().column);
+    }
 }

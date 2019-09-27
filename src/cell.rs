@@ -166,4 +166,16 @@ mod tests {
 
         assert_eq!(1, cell_a.borrow().neighbours().len());
     }
+
+    #[test]
+    fn reset_removes_links() {
+        let cell_a = GridCell::init(0, 0);
+        let cell_b = GridCell::init(0, 1);
+        let cell_c = GridCell::init(1, 0);
+        GridCell::link(&mut cell_a.borrow_mut(), &mut cell_b.borrow_mut());
+        GridCell::link(&mut cell_a.borrow_mut(), &mut cell_c.borrow_mut());
+        assert_eq!(2, cell_a.borrow().links.len());
+        cell_a.borrow_mut().reset();
+        assert_eq!(0, cell_a.borrow().links.len());
+    }
 }
