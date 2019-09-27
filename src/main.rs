@@ -3,6 +3,7 @@ mod binary_tree;
 mod cell;
 mod distances;
 mod grid;
+mod hunt_and_kill;
 mod render;
 mod side_winder;
 mod wilsons;
@@ -23,12 +24,8 @@ fn main() {
         );
         grid.distances = grid.find_distances(Coord::from(0, 0));
         let original_distances = grid.distances.clone();
-        grid.distances =
-            grid.path_to(Coord::from(grid.rows - 1, 0));
-        println!(
-            "Here's the path from NW to SW\n{}",
-            grid.to_string()
-        );
+        grid.distances = grid.path_to(Coord::from(grid.rows - 1, 0));
+        println!("Here's the path from NW to SW\n{}", grid.to_string());
         grid.distances = original_distances;
         grid.distances = grid.longest_path();
         println!(
@@ -46,12 +43,8 @@ fn main() {
         );
         grid.distances = grid.find_distances(Coord::from(0, 0));
         let original_distances = grid.distances.clone();
-        grid.distances =
-            grid.path_to(Coord::from(grid.rows - 1, 0));
-        println!(
-            "Here's the path from NW to SW\n{}",
-            grid.to_string()
-        );
+        grid.distances = grid.path_to(Coord::from(grid.rows - 1, 0));
+        println!("Here's the path from NW to SW\n{}", grid.to_string());
         grid.distances = original_distances;
         grid.distances = grid.longest_path();
         println!(
@@ -69,12 +62,8 @@ fn main() {
         );
         grid.distances = grid.find_distances(Coord::from(0, 0));
         let original_distances = grid.distances.clone();
-        grid.distances =
-            grid.path_to(Coord::from(grid.rows - 1, 0));
-        println!(
-            "Here's the path from NW to SW\n{}",
-            grid.to_string()
-        );
+        grid.distances = grid.path_to(Coord::from(grid.rows - 1, 0));
+        println!("Here's the path from NW to SW\n{}", grid.to_string());
         grid.distances = original_distances;
         grid.distances = grid.longest_path();
         println!(
@@ -87,16 +76,13 @@ fn main() {
     {
         wilsons::Wilsons::on(&grid);
         println!(
-            "Here's the maze using the Wilson's algorithm!\n{}",
+            "Here's the maze using Wilson's algorithm!\n{}",
             grid.to_string()
         );
         grid.distances = grid.find_distances(Coord::from(0, 0));
         let original_distances = grid.distances.clone();
         grid.distances = grid.path_to(Coord::from(grid.rows - 1, 0));
-        println!(
-            "Here's the path from NW to SW\n{}",
-            grid.to_string()
-        );
+        println!("Here's the path from NW to SW\n{}", grid.to_string());
         grid.distances = original_distances;
         grid.distances = grid.longest_path();
         println!(
@@ -104,5 +90,24 @@ fn main() {
             grid.to_string()
         );
         grid.to_png("wilsons.png");
+    }
+    grid.reset();
+    {
+        hunt_and_kill::HuntAndKill::on(&grid);
+        println!(
+            "Here's the maze using the Hunt and Kill algorithm!\n{}",
+            grid.to_string()
+        );
+        grid.distances = grid.find_distances(Coord::from(0, 0));
+        let original_distances = grid.distances.clone();
+        grid.distances = grid.path_to(Coord::from(grid.rows - 1, 0));
+        println!("Here's the path from NW to SW\n{}", grid.to_string());
+        grid.distances = original_distances;
+        grid.distances = grid.longest_path();
+        println!(
+            "Here's the most difficult path in the maze\n{}",
+            grid.to_string()
+        );
+        grid.to_png("hunt_and_kill.png");
     }
 }
