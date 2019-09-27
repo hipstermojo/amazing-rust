@@ -110,8 +110,12 @@ impl Renderable for Grid {
                 .distances
                 .get_cell_distance(&Coord::from(cell.borrow().row, cell.borrow().column));
             intensity = (max_distance - distance) as f64 / max_distance as f64;
+            let bright = 0.5 + (0.4 * intensity);
+            context.set_source_rgb(bright, intensity, bright);
         } else {
             intensity = 0.0;
+            let bright = 0.5 + (0.4 * intensity);
+            context.set_source_rgb(intensity, bright, intensity);
         }
         context.rectangle(
             padding + 1.0 + (30 * x_index) as f64,
@@ -119,8 +123,6 @@ impl Renderable for Grid {
             cell_size.width,
             cell_size.height,
         );
-        let bright = 0.5 + (0.4 * intensity);
-        context.set_source_rgb(intensity, bright, intensity);
         context.fill();
         context.set_source_rgb(0.0, 0.0, 0.0);
     }
