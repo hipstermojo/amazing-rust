@@ -4,6 +4,7 @@ mod cell;
 mod distances;
 mod grid;
 mod hunt_and_kill;
+mod recursive_backtracker;
 mod render;
 mod side_winder;
 mod wilsons;
@@ -140,6 +141,31 @@ fn main() {
             grid.to_string()
         );
         grid.to_png("hunt_and_kill.png");
+    }
+    grid.reset();
+    {
+        recursive_backtracker::RecursiveBacktracker::on(&grid);
+        stats.push(format!(
+            "Recursive Backtracker: {}/{} ({}%)",
+            grid.deadends(),
+            grid.size(),
+            (grid.deadends() * 100) / grid.size()
+        ));
+        println!(
+            "Here's the maze using the Recursive Backtracker algorithm!\n{}",
+            grid.to_string()
+        );
+        grid.distances = grid.find_distances(Coord::from(0, 0));
+        let original_distances = grid.distances.clone();
+        grid.distances = grid.path_to(Coord::from(grid.rows - 1, 0));
+        println!("Here's the path from NW to SW\n{}", grid.to_string());
+        grid.distances = original_distances;
+        grid.distances = grid.longest_path();
+        println!(
+            "Here's the most difficult path in the maze\n{}",
+            grid.to_string()
+        );
+        grid.to_png("recursive_backtracker.png");
     }
     println!(
         "Deadends of maze algorithms on a ({}x{}) maze",
