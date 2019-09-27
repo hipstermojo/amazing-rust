@@ -166,6 +166,13 @@ impl Grid {
         let (goal, _) = self.distances.max();
         self.path_to(goal)
     }
+
+    pub fn deadends(&self) -> usize {
+        self.grid
+            .iter()
+            .map(|row| row.iter().filter(|col| col.borrow().links.len() == 1))
+            .fold(0, |acc, x| acc + x.count())
+    }
 }
 
 impl ToString for Grid {

@@ -14,10 +14,17 @@ use render::Renderable;
 
 fn main() {
     println!("I am making some amazing things");
-    let mut grid = Grid::initialize(25, 25);
+    let mut grid = Grid::initialize(20, 20);
     grid.configure_cells();
+    let mut stats = Vec::new();
     {
         binary_tree::BinaryTree::on(&grid);
+        stats.push(format!(
+            "Binary Tree: {}/{} ({}%)",
+            grid.deadends(),
+            grid.size(),
+            (grid.deadends() * 100) / grid.size()
+        ));
         println!(
             "Here's the maze using the binary tree algorithm!\n{}",
             grid.to_string()
@@ -37,6 +44,12 @@ fn main() {
     grid.reset();
     {
         side_winder::SideWinder::on(&grid);
+        stats.push(format!(
+            "SideWinder: {}/{} ({}%)",
+            grid.deadends(),
+            grid.size(),
+            (grid.deadends() * 100) / grid.size()
+        ));
         println!(
             "Here's the maze using the Sidewinder algorithm!\n{}",
             grid.to_string()
@@ -56,6 +69,12 @@ fn main() {
     grid.reset();
     {
         aldous_broder::AldousBroder::on(&grid);
+        stats.push(format!(
+            "Aldous Broder: {}/{} ({}%)",
+            grid.deadends(),
+            grid.size(),
+            (grid.deadends() * 100) / grid.size()
+        ));
         println!(
             "Here's the maze using the Aldous-Broder algorithm!\n{}",
             grid.to_string()
@@ -75,6 +94,12 @@ fn main() {
     grid.reset();
     {
         wilsons::Wilsons::on(&grid);
+        stats.push(format!(
+            "Wilson's: {}/{} ({}%)",
+            grid.deadends(),
+            grid.size(),
+            (grid.deadends() * 100) / grid.size()
+        ));
         println!(
             "Here's the maze using Wilson's algorithm!\n{}",
             grid.to_string()
@@ -94,6 +119,12 @@ fn main() {
     grid.reset();
     {
         hunt_and_kill::HuntAndKill::on(&grid);
+        stats.push(format!(
+            "Hunt and Kill: {}/{} ({}%)",
+            grid.deadends(),
+            grid.size(),
+            (grid.deadends() * 100) / grid.size()
+        ));
         println!(
             "Here's the maze using the Hunt and Kill algorithm!\n{}",
             grid.to_string()
@@ -109,5 +140,12 @@ fn main() {
             grid.to_string()
         );
         grid.to_png("hunt_and_kill.png");
+    }
+    println!(
+        "Deadends of maze algorithms on a ({}x{}) maze",
+        grid.rows, grid.columns
+    );
+    for stat in stats {
+        println!("{}", stat);
     }
 }
